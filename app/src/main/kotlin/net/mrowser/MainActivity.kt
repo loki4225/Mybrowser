@@ -493,6 +493,20 @@ class MainActivity : Activity() {
             searchEngine = { settings.get().searchEngine },
             onEdit = { fav -> FavoriteDialog.show(this, favorites, fav) { url -> homeView.refresh(url) } },
             onHistory = { showHistory(fromHome = true) },
+            onAddWebsite = {
+                FavoriteDialog.showAdd(this) { title, rawUrl ->
+                    val resolved = UrlNormalizer.resolve(rawUrl, settings.get().searchEngine)
+                    if (resolved.isNullOrBlank()) {
+                        false
+                    } else {
+                        val existing = favorites.findAll().firstOrNull { it.url.equals(resolved, ignoreCase = true) }
+                        if (existing == null) favorites.add(Favorite(title, resolved))
+                        homeView.refresh(resolved)
+                        Toast.makeText(this, R.string.website_added, Toast.LENGTH_SHORT).show()
+                        true
+                    }
+                }
+            },
             onDownloads = { showDownloads(fromHome = true) },
             onSettings = { showSettings() },
             onUpdate = { release ->
