@@ -36,6 +36,7 @@ class HomeView @JvmOverloads constructor(
     private val urlInput: EditText
     private val updateButton: Button
     private val downloadsButton: Button
+    private val addWebsiteButton: Button
 
     private var repository: FavoritesRepository? = null
     private var onOpen: (Favorite) -> Unit = {}
@@ -43,6 +44,7 @@ class HomeView @JvmOverloads constructor(
     private var searchEngine: () -> SearchEngine = { SearchEngine.DEFAULT }
     private var onEdit: (Favorite) -> Unit = {}
     private var onHistory: () -> Unit = {}
+    private var onAddWebsite: () -> Unit = {}
     private var onDownloads: () -> Unit = {}
     private var onSettings: () -> Unit = {}
     private var onUpdate: (Release) -> Unit = {}
@@ -68,6 +70,8 @@ class HomeView @JvmOverloads constructor(
             }
         }
         findViewById<Button>(R.id.homeHistoryButton).setOnClickListener { onHistory() }
+        addWebsiteButton = findViewById(R.id.homeAddWebsiteButton)
+        addWebsiteButton.setOnClickListener { onAddWebsite() }
         downloadsButton = findViewById(R.id.homeDownloadsButton)
         downloadsButton.setOnClickListener { onDownloads() }
         findViewById<ImageButton>(R.id.homeSettingsButton).setOnClickListener { onSettings() }
@@ -82,6 +86,7 @@ class HomeView @JvmOverloads constructor(
         searchEngine: () -> SearchEngine,
         onEdit: (Favorite) -> Unit,
         onHistory: () -> Unit,
+        onAddWebsite: () -> Unit,
         onDownloads: () -> Unit,
         onSettings: () -> Unit,
         onUpdate: (Release) -> Unit
@@ -92,6 +97,7 @@ class HomeView @JvmOverloads constructor(
         this.searchEngine = searchEngine
         this.onEdit = onEdit
         this.onHistory = onHistory
+        this.onAddWebsite = onAddWebsite
         this.onDownloads = onDownloads
         this.onSettings = onSettings
         this.onUpdate = onUpdate
