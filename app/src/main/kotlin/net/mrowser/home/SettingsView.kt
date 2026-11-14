@@ -13,6 +13,7 @@ import net.mrowser.adblock.BlockList
 import net.mrowser.data.CursorSpeed
 import net.mrowser.data.Settings
 import net.mrowser.data.SettingsRepository
+import net.mrowser.data.VideoQuality
 import net.mrowser.web.SearchEngine
 import net.mrowser.web.SiteSettings
 
@@ -26,6 +27,8 @@ class SettingsView @JvmOverloads constructor(
     private val autoOpenRow: View
     private val frameRateRow: View
     private val resolutionRow: View
+    private val qualityRow: View
+    private val qualityValue: TextView
     private val desktopRow: View
     private val popupRow: View
     private val adsRow: View
@@ -48,6 +51,8 @@ class SettingsView @JvmOverloads constructor(
         autoOpenRow = findViewById(R.id.settingsAutoOpenRow)
         frameRateRow = findViewById(R.id.settingsFrameRateRow)
         resolutionRow = findViewById(R.id.settingsResolutionRow)
+        qualityRow = findViewById(R.id.settingsQualityRow)
+        qualityValue = findViewById(R.id.settingsQualityValue)
         desktopRow = findViewById(R.id.settingsDesktopRow)
         popupRow = findViewById(R.id.settingsPopupRow)
         adsRow = findViewById(R.id.settingsAdsRow)
@@ -61,6 +66,7 @@ class SettingsView @JvmOverloads constructor(
         autoOpenRow.setOnClickListener { toggleAutoOpen() }
         frameRateRow.setOnClickListener { toggleMatchFrameRate() }
         resolutionRow.setOnClickListener { toggleMatchResolution() }
+        qualityRow.setOnClickListener { pickVideoQuality() }
         desktopRow.setOnClickListener { toggleDesktopByDefault() }
         popupRow.setOnClickListener { toggleBlockPopups() }
         adsRow.setOnClickListener { toggleBlockAds() }
@@ -104,6 +110,7 @@ class SettingsView @JvmOverloads constructor(
         showToggle(autoOpenRow, R.string.auto_open_title, s.autoOpenPlayer)
         showToggle(frameRateRow, R.string.match_frame_rate_title, s.matchFrameRate)
         showToggle(resolutionRow, R.string.match_resolution_title, s.matchResolution)
+        qualityValue.text = qualityLabel(s.videoQuality)
         showToggle(desktopRow, R.string.desktop_by_default_title, s.desktopByDefault)
         showToggle(popupRow, R.string.block_popups_title, s.blockPopups)
         showToggle(adsRow, R.string.block_ads_title, s.blockAds)
@@ -133,6 +140,26 @@ class SettingsView @JvmOverloads constructor(
         val s = current()
         repository?.update(s.copy(matchFrameRate = !s.matchFrameRate))
         render()
+    }
+
+    private fun pickVideoQuality() {
+        val options = VideoQuality.values()
+        val labels = options.map { qualityLabel(it) }.toTypedArray()
+        AlertDialog.Builder(context)
+            .setTitle(R.string.default_video_quality_title)
+            .setSingleChoiceItems(labels, options.indexOf(current().videoQuality)) { dialog, which ->
+                repository?.update(current().copy(videoQuality = options[which]))
+                render()
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    private fun qualityLabel(q: VideoQuality): String = when (q) {
+        VideoQuality.P480 -> "480p"
+        VideoQuality.P720 -> "720p"
+        VideoQuality.P1080 -> "1080p"
+        VideoQuality.AUTO -> context.getString(R.string.quality_auto)
     }
 
     private fun toggleMatchResolution() {
