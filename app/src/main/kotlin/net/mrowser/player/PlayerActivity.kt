@@ -37,6 +37,7 @@ import androidx.media3.ui.TrackSelectionDialogBuilder
 import net.mrowser.R
 import net.mrowser.data.JsonSettingsStore
 import net.mrowser.data.SettingsRepository
+import net.mrowser.data.VideoQuality
 import net.mrowser.stream.MediaMimeType
 import net.mrowser.stream.PlaybackRequest
 import java.io.File
@@ -70,6 +71,19 @@ class PlayerActivity : Activity() {
         streamUrl = request.url
 
         val trackSelector = DefaultTrackSelector(this)
+        val quality = settings.get().videoQuality
+        val maxSize = when (quality) {
+            VideoQuality.P480 -> 854 to 480
+            VideoQuality.P720 -> 1280 to 720
+            VideoQuality.P1080, VideoQuality.AUTO -> 1920 to 1080
+        }
+        // Prefer the selected ceiling while allowing ExoPlayer to exceed it when the
+        // manifest has no rendition at or below that size (480p -> 720p -> 1080p).
+        trackSelector.setParameters(
+            trackSelector.buildUponParameters()
+                .setMaxVideoSize(maxSize.first, maxSize.second)
+                .setExceedVideoConstraintsIfNecessary(true)
+        )
         // DefaultMediaSourceFactory builds the source the request's MIME type asks for — HLS for
         // an .m3u8, DASH for an .mpd, progressive for a plain file. The player carries
         // no text track — side-loaded subtitles are rendered by SubtitleSyncController, not merged here.
