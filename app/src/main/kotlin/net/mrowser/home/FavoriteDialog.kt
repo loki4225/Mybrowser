@@ -17,6 +17,37 @@ import net.mrowser.data.FavoritesRepository
  */
 object FavoriteDialog {
 
+    fun showAdd(context: Context, onSave: (String, String) -> Boolean) {
+        val builder = AlertDialog.Builder(context)
+        val ctx = builder.context
+        val titleField = EditText(ctx).apply { hint = ctx.getString(R.string.title_hint) }
+        val urlField = EditText(ctx).apply {
+            hint = ctx.getString(R.string.url_hint)
+            inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_URI
+        }
+        val container = LinearLayout(ctx).apply {
+            orientation = LinearLayout.VERTICAL
+            val pad = (24 * resources.displayMetrics.density).toInt()
+            setPadding(pad, pad / 2, pad, 0)
+            addView(titleField)
+            addView(urlField)
+        }
+        val dialog = builder.setTitle(R.string.add_website)
+            .setView(container)
+            .setPositiveButton(R.string.save, null)
+            .setNegativeButton(R.string.cancel, null)
+            .create()
+        dialog.setOnShowListener {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                val url = urlField.text.toString().trim()
+                val title = titleField.text.toString().trim().ifBlank { url }
+                if (onSave(title, url)) dialog.dismiss()
+                else urlField.error = ctx.getString(R.string.website_invalid)
+            }
+        }
+        dialog.show()
+    }
+
     fun show(context: Context, repository: FavoritesRepository, fav: Favorite, onChanged: (String?) -> Unit) {
         val builder = AlertDialog.Builder(context)
         // The dialog theme's context, so the fields and the move pills pick up its styles.
