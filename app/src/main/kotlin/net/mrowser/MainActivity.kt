@@ -414,8 +414,19 @@ class MainActivity : Activity() {
         chromeClient = BrowserWebChromeClient(
             activity = this,
             container = layout,
-            onEnter = { pageMenu.dismiss(); chrome.dismiss(); playChip.visibility = View.GONE; refreshDownloadChip(); layout.invalidate() },
-            onExit = { refreshDownloadChip(); layout.invalidate() },
+            onEnter = {
+                pageMenu.dismiss()
+                chrome.dismiss()
+                layout.cursorDotVisible = false
+                playChip.visibility = View.GONE
+                refreshDownloadChip()
+                layout.invalidate()
+            },
+            onExit = {
+                layout.cursorDotVisible = true
+                refreshDownloadChip()
+                layout.invalidate()
+            },
             onTitle = { url, title -> recordHistory(url, title) },
             onPopupBlocked = { Toast.makeText(this, R.string.popup_blocked, Toast.LENGTH_SHORT).show() },
             isBlockedPopup = { url -> adBlocker.isBlockedPopup(url) },
