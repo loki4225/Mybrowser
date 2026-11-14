@@ -2,9 +2,12 @@ package net.mrowser.data
 
 import net.mrowser.web.SearchEngine
 
+enum class VideoQuality { P480, P720, P1080, AUTO }
+
 /** App-wide settings. Defaults are the shipped values. Immutable — update via copy(). */
 data class Settings(
     val autoOpenPlayer: Boolean = true,
+    val videoQuality: VideoQuality = VideoQuality.P480,
     val cursorSpeed: CursorSpeed = CursorSpeed.NORMAL,
     /**
      * Refuse a window the page opens whose destination is on the block list. On a browser with
