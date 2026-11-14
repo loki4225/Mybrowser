@@ -60,6 +60,18 @@
             <View
                 style="@style/Widget.Mrowser.SettingsSwitch" />
         </LinearLayout>
+        <LinearLayout
+            android:id="@+id/settingsQualityRow"
+            style="@style/Widget.Mrowser.SettingsRow">
+
+            <TextView
+                style="@style/Mrowser.SettingsLabel"
+                android:text="@string/default_video_quality_title" />
+
+            <TextView
+                android:id="@+id/settingsQualityValue"
+                style="@style/Mrowser.SettingsValue" />
+        </LinearLayout>
         <TextView
             style="@style/Mrowser.SettingsSection"
             android:text="@string/settings_section_browsing" />
