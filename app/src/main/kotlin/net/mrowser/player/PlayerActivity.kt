@@ -315,6 +315,33 @@ class PlayerActivity : Activity() {
             .setMimeType(MediaMimeType.of(request.url))
             .build()
 
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        when (event.keyCode) {
+            KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_DPAD_RIGHT -> {
+                if (event.action == KeyEvent.ACTION_DOWN && event.repeatCount == 0) {
+                    val p = player ?: return true
+                    if (!p.isCurrentMediaItemLive && p.duration != C.TIME_UNSET) {
+                        val delta = if (event.keyCode == KeyEvent.KEYCODE_DPAD_LEFT) -10_000L else 10_000L
+                        val target = (p.currentPosition + delta).coerceIn(0L, p.duration)
+                        p.seekTo(target)
+                    }
+                }
+                return true
+            }
+            KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_NUMPAD_ENTER -> {
+                if (event.action == KeyEvent.ACTION_UP) {
+                    player?.let { if (it.isPlaying) it.pause() else it.play() }
+                }
+                return true
+            }
+            KeyEvent.KEYCODE_BACK, KeyEvent.KEYCODE_ESCAPE -> {
+                if (event.action == KeyEvent.ACTION_UP) finish()
+                return true
+            }
+        }
+        return super.dispatchKeyEvent(event)
+    }
+
     override fun onStart() {
         super.onStart()
         subtitleController?.resume()
