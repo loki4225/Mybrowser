@@ -12,6 +12,7 @@ object SettingsJson {
     fun toJson(settings: Settings): String =
         JSONObject()
             .put("autoOpenPlayer", settings.autoOpenPlayer)
+            .put("videoQuality", settings.videoQuality.name)
             .put("cursorSpeed", settings.cursorSpeed.name)
             .put("blockPopups", settings.blockPopups)
             .put("blockAds", settings.blockAds)
@@ -33,6 +34,7 @@ object SettingsJson {
             val defaults = Settings()
             Settings(
                 autoOpenPlayer = o.optBoolean("autoOpenPlayer", defaults.autoOpenPlayer),
+                videoQuality = enumOrDefault(o.optString("videoQuality"), defaults.videoQuality),
                 cursorSpeed = enumOrDefault(o.optString("cursorSpeed"), defaults.cursorSpeed),
                 blockPopups = o.optBoolean("blockPopups", defaults.blockPopups),
                 blockAds = o.optBoolean("blockAds", defaults.blockAds),
