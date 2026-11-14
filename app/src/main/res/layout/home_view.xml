@@ -49,6 +49,14 @@
             android:textColorHint="@color/hint" />
 
         <Button
+            android:id="@+id/homeAddWebsiteButton"
+            style="@style/Widget.Mrowser.Pill"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="@string/add_website" />
+
+        <Button
             android:id="@+id/homeHistoryButton"
             style="@style/Widget.Mrowser.Pill"
             android:layout_width="wrap_content"
