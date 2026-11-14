@@ -75,15 +75,18 @@ class PlayerActivity : Activity() {
         val maxSize = when (quality) {
             VideoQuality.P480 -> 854 to 480
             VideoQuality.P720 -> 1280 to 720
-            VideoQuality.P1080, VideoQuality.AUTO -> 1920 to 1080
+            VideoQuality.P1080 -> 1920 to 1080
+            VideoQuality.AUTO -> null
         }
-        // Prefer the selected ceiling while allowing ExoPlayer to exceed it when the
-        // manifest has no rendition at or below that size (480p -> 720p -> 1080p).
-        trackSelector.setParameters(
-            trackSelector.buildUponParameters()
-                .setMaxVideoSize(maxSize.first, maxSize.second)
-                .setExceedVideoConstraintsIfNecessary(true)
-        )
+        // Constrain the preferred ceiling but allow a larger available rendition when
+        // the manifest has no track at or below it. Auto leaves adaptive selection untouched.
+        if (maxSize != null) {
+            trackSelector.setParameters(
+                trackSelector.buildUponParameters()
+                    .setMaxVideoSize(maxSize.first, maxSize.second)
+                    .setExceedVideoConstraintsIfNecessary(true)
+            )
+        }
         // DefaultMediaSourceFactory builds the source the request's MIME type asks for — HLS for
         // an .m3u8, DASH for an .mpd, progressive for a plain file. The player carries
         // no text track — side-loaded subtitles are rendered by SubtitleSyncController, not merged here.
