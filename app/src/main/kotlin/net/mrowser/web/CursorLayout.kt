@@ -66,6 +66,9 @@ class CursorLayout @JvmOverloads constructor(
      * redraws once; while true and drawn, the ring keeps itself animating, and it asks for
      * nothing when false or detached.
      */
+    var cursorDotVisible = true
+        set(value) { if (field != value) { field = value; invalidate() } }
+
     var busy = false
         set(value) {
             if (field == value) return
@@ -213,7 +216,7 @@ class CursorLayout @JvmOverloads constructor(
 
     override fun dispatchDraw(canvas: Canvas) {
         super.dispatchDraw(canvas)
-        if (cursor.mode == CursorController.Mode.CURSOR) {
+        if (cursorDotVisible && cursor.mode == CursorController.Mode.CURSOR) {
             val r = 10f * density
             canvas.drawCircle(cursor.x, cursor.y, r, dotPaint)
             canvas.drawCircle(cursor.x, cursor.y, r, outlinePaint)
